@@ -1,0 +1,81 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>addlogin</title>
+    <link rel="stylesheet" href="css/login.css">
+  </head>
+  <body>
+    <div class="img">
+      <div class="content">
+        <h2>تسجـــــــيل دخــــــول</h2>
+        <form id="signupForm">
+          <div class="filed">
+            <input type="text" id="name" name="name" required placeholder="أدخل الاسم">
+          </div>
+          
+          <div class="filed space">
+            <input type="password" id="password" name="password" class="pass-key" required placeholder="كلمه المرور">
+            <span class="show">ظهور</span>
+          </div>
+          
+          <br>
+          <div class="filed">
+            <input type="text" id="phone" name="phone" required placeholder="رقم الهاتف">
+          </div>
+
+          <div class="field1">
+            <input type="submit" value="دخــــــول">
+          </div>
+        </form>
+        
+        <div class="signup">ليس لدي حساب
+          <a href="#">تسجيل جديد</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ربط Supabase باستخدام JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script>
+      const supabaseUrl = 'https://ebsggzgkfagtzclmsoiz.supabase.co'; // رابط مشروعك
+      const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVic2dnemdrZmFndHpjbG1zb2l6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzA5MTIzMTQsImV4cCI6MjA0NjQ4ODMxNH0.ZvkC_FbMO_pugC1eZHYJpcFt3mtNiLuKc8mpGgVqn5Q'; // مفتاح API
+      const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+      // معالجة إرسال النموذج
+      document.getElementById('signupForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // جلب البيانات من النموذج
+        const username = document.getElementById('name').value;
+        const pass = document.getElementById('password').value;
+        const tle = document.getElementById('phone').value;
+
+        // إرسال البيانات إلى قاعدة البيانات
+        const { data, error } = await supabase
+          .from('users') // افترض أن اسم الجدول هو "users"
+          .insert([
+            { username: username, pass: pass, tle: tle } // اسم الأعمدة حسب قاعدة البيانات
+          ]);
+
+        if (error) {
+          console.error('Error inserting data:', error);
+          alert('حدث خطأ أثناء تسجيل البيانات. حاول مرة أخرى.');
+        } else {
+          console.log('تم تسجيل المستخدم بنجاح:', data);
+          alert('تم التسجيل بنجاح!');
+        }
+      });
+
+      // جلب البيانات من الجدول "users"
+      const { data, error } = await supabase
+        .from('users') // اسم الجدول "users"
+        .select('*'); // جلب كل الأعمدة
+
+      if (error) {
+        console.error('Error fetching data:', error);
+      } else {
+        console.log('Fetched data:', data); // عرض البيانات في وحدة التحكم
+      }
+    </script>
+  </body>
+</html>
